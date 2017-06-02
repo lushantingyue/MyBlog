@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Please sign in</h3>
+                    <p>{{ message }}</p>
+                </div>
+                <div class="panel-body">
+                    <form action="/addUsr" method="post">
+                        <div class="form-group">
+                            <label>用户名: </label>
+                            <input type="s" name="email" class="form-control" placeholder="Email">
+                            <p class="help-block">请输入用户名... </p>
+                        </div>
+                        <div class="form-group">
+                            <label>爱好: </label>
+                            <input type="password" name="password" class="form-control" placeholder="Password">
+                            <p class="help-block">请输入爱好...</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary"> 确定 </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

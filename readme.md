@@ -13,6 +13,7 @@
     支持views视图目录
     默认jade为模板引擎
              
+[WebStorm添加jade(pug) watcher](http://blog.csdn.net/stSahana/article/details/52191517)
 ## 实现步骤(参考廖雪峰的JavaScript教程)[链接](http://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001472286125147031e735933574ae099842afd31be80d1000):
 ```
 1.实现基本路由, 路由封装

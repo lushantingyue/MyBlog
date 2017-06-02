@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+</head>
+
+<body>
+<p>用户列表</p>
+<!--<p>{{user_list}}</p>-->
+<br>
+{% for usr in user_list %}
+<p>name: {{ usr.username }}</p>
+<p>goodAt: {{usr.goodAt}}</p>
+{% endfor %}
+
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>nunjuck Test Page</title>
+</head>
+
+<body>
+<!--<p>{{ message|shorten }}</p>-->
+<!--<p>{{ message }}</p>-->
+<br>
+
+<p>用户列表</p>
+<!--<p>{{user_list}}</p>-->
+<br>
+{% for usr in user_list %}
+<p>{{ usr.username }}</p>
+<p>goodAt: {{usr.goodAt}}</p>
+{% endfor %}
+
+</body>
+</html>
