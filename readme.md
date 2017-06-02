@@ -30,5 +30,8 @@
     "dependencies": {
     "koa-compose": "^2.3.0",  // 
     "koa": "^1.0.0",  // koa核心库
-  }
+    "koa-views": "^5.2.1",  // 模板匹配模块
+    "nunjucks": "3.0.1",  // 模板引擎
+    "mongoose": "^4.10.2" // mongoDB数据库操作模块
+  }
   ```
