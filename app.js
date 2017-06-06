@@ -15,6 +15,7 @@ const logger = require('koa-logger');
 const index = require('./routes/index');
 const users = require('./routes/users');
 const del = require('./routes/delete');
+const restful = require('./routes/rest');
 
 // error handler
 onerror(app);
@@ -64,5 +65,7 @@ app.use(users.routes())
     .use(users.allowedMethods());
 app.use(del.routes())
     .use(del.allowedMethods());
+app.use(restful.routes())
+    .use(restful.allowedMethods());
 
 module.exports = app;
