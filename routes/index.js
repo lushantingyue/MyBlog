@@ -2,7 +2,46 @@ var router = require('koa-router')();
 var mongoose = require('mongoose');
 var Model_User = mongoose.model('User');
 
-router.get('/', async function (ctx, next) {
+router.prefix('/');
+
+router.get('/jianshu', async function(ctx, next) {
+    // var result_collections = require('../model/ariticle_model');
+    // var mongoose = require('mongoose');
+    // var Schema = mongoose.Schema;
+//
+// // TODO:定义一个数据的模板规格
+// // 文章: 作者,标题,概要,日期,头像
+//     var articlesSchema = new Schema({
+//         author: String,
+//         title: String,
+//         abstract: String,
+//         date: String,
+//         avatar: String
+//     });
+//
+// TODO:调用已注册的数据集合模型
+    var articlesModel = mongoose.model("articles");
+    var result_collections;
+    await articlesModel.find({}, function (err, result) {
+        if (err) {
+            console.log('load articles data failed...' + err);
+            return;
+        }
+        else {
+            result_collections = result;
+            console.log(result);
+        }
+    })
+
+    await ctx.render('jianshu', {
+        title: '从Mongoose获取简书文章',
+        articles_list: result_collections
+    })
+
+})
+
+router.get('/list', async function (ctx, next) {
+    // require('../model/ariticle_model');
     // ctx.state = {
     //     title: 'koa2 展示列表数据'
     // };
@@ -35,17 +74,23 @@ router.get('/', async function (ctx, next) {
     await ctx.render('list-user', {
         title: '从Mongoose获取用户列表',
         // user_list: ['Apple', 'Pear', 'Banana']
-        message:data,
+        message: data,
         user_list: user_list
     })
 
-    // await ctx.render('index', {message: data});
 })
 
-router.get('/foo', async function (ctx, next) {
+// TODO:router 解析id参数ko
+router.get('/:id', (ctx, next) => {
+    console.log(ctx.param);
+});
+
+router.url('/foo', async function (ctx, next) {
     await ctx.render('index', {
         title: 'koa2 foo'
     });
 });
+
+
 
 module.exports = router;

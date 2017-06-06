@@ -11,7 +11,7 @@
     支持static server，即public目录
     支持routes路由目录
     支持views视图目录
-    默认jade为模板引擎
+    默认jade为模板引擎, 现已替换为nunjucks
              
 [WebStorm添加jade(pug) watcher](http://blog.csdn.net/stSahana/article/details/52191517)
 ## 实现步骤(参考廖雪峰的JavaScript教程)[链接](http://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001472286125147031e735933574ae099842afd31be80d1000):
@@ -24,7 +24,11 @@
 
 #### koa2 和 koa 1.x 的区别
       Koa2 应用了ES7的 Async/Await来替代 Koa1中的生成器函数generator与yield。
-      
+#### 踩坑记录
+    1. router如果有多个url get请求, 请使用router.prefix('/'), 以免除主路径外, 其余get请求无法定位
+    2. 读取已有数据集合时, Model必须先定义好.
+    仍存在的问题: 
+        不能把 GET '/jianshu' 单独作为一个router文件, 否则解析不到
 ## 依赖的库
 ```
     "dependencies": {
@@ -33,5 +37,5 @@
     "koa-views": "^5.2.1",  // 模板匹配模块
     "nunjucks": "3.0.1",  // 模板引擎
     "mongoose": "^4.10.2" // mongoDB数据库操作模块
-  }
+  }
   ```

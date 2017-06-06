@@ -1,4 +1,5 @@
 require('./model/db');
+require('./model/ariticle_model');
 const Koa = require('koa');
 const app = new Koa();
 
@@ -37,7 +38,7 @@ const path = require('path');
 const nunjucks = require('nunjucks');
 
 const env = new nunjucks.Environment(
-    new nunjucks.FileSystemLoader(path.join(__dirname, '/views')) )
+    new nunjucks.FileSystemLoader(path.join(__dirname, '/views')))
 env.addFilter('shorten', function (str, count) {
     return str.slice(0, count || 5)
 })
@@ -57,7 +58,7 @@ app.use(async (ctx, next) => {
 });
 
 //  TODO: 接入路由定义
-app.use(index.routes())
+app.use( index.routes())
     .use(index.allowedMethods());
 app.use(users.routes())
     .use(users.allowedMethods());

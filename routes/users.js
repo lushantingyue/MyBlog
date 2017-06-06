@@ -4,7 +4,7 @@ var User_Model = mongoose.model('User');  // 使用User模型
 
 router.prefix('/users');
 
-router.get('/', async (ctx, next) => {
+router.get('/a', async (ctx, next) => {
     // ctx.body = 'this is a users response!';
     await ctx.render('nunjucks-filter', {message: 'this is a users response!'});
 });
