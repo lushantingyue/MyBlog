@@ -80,10 +80,28 @@ router.get('/list', async function (ctx, next) {
 
 })
 
-// TODO:router 解析id参数ko
-router.get('/:id', (ctx, next) => {
-    console.log(ctx.param);
-});
+// TODO:解析/:user参数
+// 根据 username查询单条数据
+router.get('/list/:user', async function (ctx, next) {
+    const username = ctx.params.user;
+    console.log(username);
+    var user_list;
+    await Model_User.find({'username':username}, function (err, userlist) {
+        if (err)
+            console.log(err)
+        else {
+            // 取出返回结果
+            user_list = userlist
+            console.log(user_list)
+        }
+    })
+
+    await ctx.render('list-user', {
+        title: '从Mongoose获取用户列表',
+        user_list: user_list
+    })
+
+})
 
 router.url('/foo', async function (ctx, next) {
     await ctx.render('index', {
