@@ -1,5 +1,6 @@
 require('./model/db');
-require('./model/ariticle_model');
+require('./model/article_model');
+require('./model/articledetail_model')
 const Koa = require('koa');
 const app = new Koa();
 
@@ -38,8 +39,19 @@ app.use(require('koa-static')(__dirname + '/public'));
 const path = require('path');
 const nunjucks = require('nunjucks');
 
+var opts = {};
+var noCache = opts.noCache || false,
+    watch = opts.watch || false,
+    autoescape = opts.autoescape === undefined ? true : opts.autoescape,
+    throwOnUndefined = opts.throwOnUndefined || false;
 const env = new nunjucks.Environment(
-    new nunjucks.FileSystemLoader(path.join(__dirname, '/views')))
+    new nunjucks.FileSystemLoader(path.join(__dirname, '/views'), {
+        noCache: noCache,
+        watch: watch,
+    }), {
+        autoescape: false,  // 该参数的配置会影响到, 加载数据内的html标签会不会被解析
+        throwOnUndefined: throwOnUndefined
+    });
 env.addFilter('shorten', function (str, count) {
     return str.slice(0, count || 5)
 })

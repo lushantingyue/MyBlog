@@ -6,7 +6,7 @@
 </head>
 
 <body>
-<p>文章列表</p>
+<p>文章列表 <i>总数: {{count}}篇</i></p>
 <br>
 {% for ele in articles_list %}
 <p>ID: {{ ele._id }}</p>
@@ -15,6 +15,7 @@
 <p>概要: {{ ele.abstract }}</p>
 <p>头像: {{ ele.avatar }}</p>
 <p>发表日期: {{ ele.date }}</p>
+<p>文章链接:{{ ele.href }}</p>
 <br>
 {% endfor %}
 

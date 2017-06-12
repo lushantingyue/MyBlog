@@ -20,6 +20,10 @@
 2.实现模板框架
 3.实现数据库连接
 4.编写mocha测试
+5.进阶: 
+    cookies保持
+    base-author验证
+    csrf 安全
 ```
 
 #### koa2 和 koa 1.x 的区别
@@ -33,7 +37,7 @@
 ```
     "dependencies": {
     "koa-compose": "^2.3.0",  // 
-    "koa": "^1.0.0",  // koa核心库
+    "koa": "^2.2.0",  // koa核心库
     "koa-views": "^5.2.1",  // 模板匹配模块
     "nunjucks": "3.0.1",  // 模板引擎
     "mongoose": "^4.10.2" // mongoDB数据库操作模块

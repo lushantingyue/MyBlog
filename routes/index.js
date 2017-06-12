@@ -4,20 +4,10 @@ var Model_User = mongoose.model('User');
 
 router.prefix('/');
 
-router.get('/jianshu', async function(ctx, next) {
+router.get('/jianshu', async function (ctx, next) {
     // var result_collections = require('../model/ariticle_model');
     // var mongoose = require('mongoose');
     // var Schema = mongoose.Schema;
-//
-// // TODO:定义一个数据的模板规格
-// // 文章: 作者,标题,概要,日期,头像
-//     var articlesSchema = new Schema({
-//         author: String,
-//         title: String,
-//         abstract: String,
-//         date: String,
-//         avatar: String
-//     });
 //
 // TODO:调用已注册的数据集合模型
     var articlesModel = mongoose.model("articles");
@@ -32,11 +22,42 @@ router.get('/jianshu', async function(ctx, next) {
             console.log(result);
         }
     })
+    var count = await articlesModel.count();
 
     await ctx.render('jianshu', {
         title: '从Mongoose获取简书文章',
-        articles_list: result_collections
+        articles_list: result_collections,
+        count:count
     })
+
+})
+
+router.get('/jianshu_detail/:href', async function (ctx, next) {
+// TODO:调用已注册的数据集合模型
+    var articleDetail = mongoose.model('articleDetail');
+    let result_collections;
+    let href = ctx.params.href;
+    console.log(href);
+    // const href = '/p/c0caf0dc7761';
+    if (href == '')
+        return;
+    else {
+        await articleDetail.findOne({'href': '/p/' + href}, function (err, result) {
+            if (err) {
+                console.log('load articles detail failed...' + err);
+                return;
+            } else {
+                result_collections = result;
+                console.log(result);
+            }
+        });
+
+        // document.getElementById("content").innerHTML += s
+        await ctx.render('detail', {
+            title: result_collections.title,
+            content: result_collections
+    });
+    }
 
 })
 
@@ -86,7 +107,7 @@ router.get('/list/:user', async function (ctx, next) {
     const username = ctx.params.user;
     console.log(username);
     var user_list;
-    await Model_User.find({'username':username}, function (err, userlist) {
+    await Model_User.find({'username': username}, function (err, userlist) {
         if (err)
             console.log(err)
         else {
@@ -108,7 +129,6 @@ router.url('/foo', async function (ctx, next) {
         title: 'koa2 foo'
     });
 });
-
 
 
 module.exports = router;
