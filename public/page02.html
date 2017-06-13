@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bootstrap 表单演示</title>
+    <!--使用本地库-->
+    <!--bootstrap css-->
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <!--bootstrap 依赖的JQuery库-->
+    <!--必须先加载 jquery(jquery 版本>=1.9.1), 后加载 bootstrap-->
+    <script src="js/jquery-3.2.1.min.js"></script>
+
+    <!--bootstrap js-->
+    <script src="js/bootstrap.js"></script>
+
+</head>
+<body>
+<h2>Bootstrap 表单
+    <small>Secondary text</small>
+</h2>
+<br>
+<span class="h5">表单</span>
+<p>
+    表单的使用:
+</p>
+<br>
+<form class="form-inline" action="">
+    <div class="form-group has-warning">
+        <label class="control-label" for="">这是一个输入框:</label>
+        <input type="text" class="form-control" placeholder="这是一个输入框">
+    </div>
+    <div class="form-group">
+        <label for="">这是一个下拉框:</label>
+        <select class="form-control" name="" id="">
+            <option value="">北京</option>
+            <option value="">深圳</option>
+            <option value="">上海</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="">这是一个输入框:</label>
+        <input type="text" class="form-control" placeholder="这是一个输入框">
+    </div>
+</form>
+<p>按钮</p>
+<button class="btn btn-default btn-lg btn-block">Bootstrap全屏按钮</button>
+<button class="btn btn-default btn-lg">Bootstrap</button>
+<button class="btn btn-success">Bootstrap</button>
+<button class="btn btn-info">Bootstrap</button>
+<button class="btn btn-warning active ">Bootstrap</button>
+<button class="btn btn-default">Bootstrap</button>
+</body>
+</html>
