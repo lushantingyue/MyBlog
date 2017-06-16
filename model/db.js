@@ -16,12 +16,12 @@ var User = new Schema({
 mongoose.model("User", User);
 
 // 创建数据库连接
-var db = mongoose.connect('mongodb://localhost/MyBlog-User');
-db.connection.on("error", function (error) {
+var dbName = mongoose.connect('mongodb://localhost/MyBlog-User');
+dbName.connection.on("error", function (error) {
     console.log("数据库连接失败：" + error);
 });
 
-db.connection.on("open", function () {
+dbName.connection.on("open", function () {
     console.log("数据库连接成功");
 });
 
@@ -31,3 +31,4 @@ db.connection.on("open", function () {
 // conn.once('open', function () {
 //     console.log('连接成功...');
 // });
+module.exports = dbName;

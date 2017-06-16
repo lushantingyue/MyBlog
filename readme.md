@@ -21,7 +21,13 @@
 3.实现数据库连接
 4.编写mocha测试
 5.进阶: 
-    cookies保持
+    cookies保持   客户端
+    session 保持和持久化  服务器 此处采用 koa-session-minimal + koa-session-mongoose方案
+    https://chenshenhai.github.io/koa2-note/note/session/info.html
+    http://i5ting.github.io/stuq-koa/koa-practice/session.html
+    http://www.fkwebs.com/2333.html
+    
+    cache 静态资源缓存
     base-author验证
     csrf 安全
 ```

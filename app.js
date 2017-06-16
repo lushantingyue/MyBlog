@@ -1,6 +1,15 @@
-require('./model/db');
+const dbName = require('./model/db');
+console.log(dbName)
+require('./model/account_model');
 require('./model/article_model');
-require('./model/articledetail_model')
+require('./model/articledetail_model');
+
+// const session = require('koa-generic-session')
+const session = require('koa-session-minimal')  // 适配koa2, 用于取代 koa-generic-session
+// const session = require("koa-session2")
+// const MongoStore = require('koa-generic-session-mongo')
+const MongooseStore = require('koa-session-mongoose')
+
 const Koa = require('koa');
 const app = new Koa();
 
@@ -27,6 +36,30 @@ app.use(bodyparser);
 app.use(json());
 app.use(logger());
 app.use(require('koa-static')(__dirname + '/public'));
+
+// TODO: init session-mongo
+app.keys = ['some secret key']; // cookies签名
+// 可将 session持久化至 缓存redis 或 数据库中, 此处存储至mongoose中
+app.use(session({
+    key: 'sessionID',
+    maxAge: 6000,
+    store: new MongooseStore({
+        collection: 'koaSessions',  // 缓存至 mongoDB 的 koaSessions的集合里
+        connection: dbName,
+        expires: 60 * 60 * 24 * 14, // 2 weeks is the default
+        model: 'KoaSession'
+    }),
+}));
+
+app.use(async (ctx, next) => {
+    if (ctx.session.views === undefined)
+        ctx.session.views = 1;
+    else
+        ctx.session.views += 1;
+
+    await next()
+    console.log('views times: ' + ctx.session.views);
+})
 
 // // 匹配nunjuck 模板引擎
 // app.use(views('views', {
@@ -71,7 +104,7 @@ app.use(async (ctx, next) => {
 });
 
 //  TODO: 接入路由定义
-app.use( index.routes())
+app.use(index.routes())
     .use(index.allowedMethods());
 app.use(users.routes())
     .use(users.allowedMethods());

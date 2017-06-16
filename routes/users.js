@@ -1,6 +1,7 @@
 var router = require('koa-router')();
 var mongoose = require('mongoose');
 var User_Model = mongoose.model('User');  // 使用User模型
+var Account_Model = mongoose.model('account');  // 使用 account模型
 
 router.prefix('/users');
 
@@ -64,5 +65,81 @@ router.post('/upgrade', async (ctx, next) => {
     });
 
 });
+
+// TODO: session保持
+router.post('/register', async function (ctx, next) {
+    console.log(ctx.request.body)
+    var session = ctx.session;
+    let body = ctx.request.body;
+    let account = new Account_Model({
+        username: body.username,
+        password: body.password,
+        signature: 'I am Super User...',
+        created: Date.now()
+    });
+    var condition = {
+        $and: [{"username": body.username}, {"password": body.password}]
+    }
+    Account_Model.findOne(condition, function (err, data) {
+        if(err) {
+            console.log(err)
+            return;
+        } else {
+            if(null != data) {
+                console.log('账号已存在...')
+            } else {
+                console.log('可注册...')
+            }
+        }
+    });
+    account.save(function (err, acc, count) {
+        if (!ctx.request.body.username) {
+            ctx.throw(400, '.name required');
+        } else {
+            console.log('register success...')
+        }
+        session.current_user = {
+            username: body.username,
+            password: body.password
+        }
+    });
+
+    console.log(session)
+    ctx.redirect('/list')
+});
+
+// TODO: login
+router.post('/login', async function (ctx) {
+    "use strict";
+    console.log(ctx.request.body)
+    var session = ctx.session;
+    let body = ctx.request.body;
+    var condition = {
+        $and: [{"username": body.username}, {"password": body.password}]
+    };
+
+    Account_Model.findOne(condition, function (err, data) {
+        if (err) {
+            console.log(err)
+            return;
+        } else {
+            if (null != data) {
+                console.log(data)
+                console.log('login success...')
+                session.current_user = {
+                    username: body.username,
+                    password: body.password
+                }
+                console.log(session)
+
+                // ctx.redirect('/list')
+            } else {
+                console.log('user not exist...')
+                return;
+            }
+        }
+    });
+
+})
 
 module.exports = router;

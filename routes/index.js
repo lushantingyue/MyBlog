@@ -27,7 +27,7 @@ router.get('/jianshu', async function (ctx, next) {
     await ctx.render('jianshu', {
         title: '从Mongoose获取简书文章',
         articles_list: result_collections,
-        count:count
+        count: count
     })
 
 })
@@ -56,7 +56,7 @@ router.get('/jianshu_detail/:href', async function (ctx, next) {
         await ctx.render('detail', {
             title: result_collections.title,
             content: result_collections
-    });
+        });
     }
 
 })
@@ -123,12 +123,5 @@ router.get('/list/:user', async function (ctx, next) {
     })
 
 })
-
-router.url('/foo', async function (ctx, next) {
-    await ctx.render('index', {
-        title: 'koa2 foo'
-    });
-});
-
 
 module.exports = router;
