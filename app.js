@@ -37,6 +37,20 @@ app.use(bodyparser);
 app.use(json());
 // 允许跨域访问
 app.use(cors());
+// 可细化配置允许跨域访问的情景
+// app.use(cors({
+//     origin: function(ctx) {
+//         if (ctx.url === '/test') {
+//             return false;
+//         }
+//         return '*';
+//     },
+//     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+//     maxAge: 5,
+//     credentials: true,
+//     allowMethods: ['GET', 'POST', 'DELETE'],
+//     allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+// }));
 app.use(logger());
 app.use(require('koa-static')(__dirname + '/public'));
 
