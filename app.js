@@ -14,6 +14,7 @@ const Koa = require('koa');
 const app = new Koa();
 
 const views = require('koa-views');
+const cors = require('koa2-cors');
 // const Router = require('koa-router');
 // const router = new Router();
 
@@ -34,6 +35,8 @@ onerror(app);
 app.use(bodyparser);
 
 app.use(json());
+// 允许跨域访问
+app.use(cors());
 app.use(logger());
 app.use(require('koa-static')(__dirname + '/public'));
 
