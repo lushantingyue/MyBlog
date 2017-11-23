@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node bin/www",
     "pm2": "pm2 start bin/www ",
+    "pstop": "pm2 stop bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
