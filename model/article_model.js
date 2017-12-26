@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 var articlesSchema = new Schema({
     author: String,
     title: String,
-    abstract: String,
+    _abstract: String,
     date: String,
     avatar: String,
     href:String
