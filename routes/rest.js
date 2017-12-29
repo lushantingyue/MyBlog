@@ -32,7 +32,7 @@ router.get('/jianshuDetail/:href', async function(ctx, next) {
     var articlesdetailModel = mongoose.model("articleDetail");
     let href = ctx.params.href;
     var result_collections;
-    await articlesdetailModel.find({'href': '/p/' + href}, function (err, result) {
+    await articlesdetailModel.findOne({'href': '/p/' + href}, function (err, result) {
         if (err) {
             console.log('load articles detail data failed...' + err);
             return;
