@@ -9,7 +9,8 @@ var articlesSchema = new Schema({
     _abstract: String,
     date: String,
     avatar: String,
-    href:String
+    href: String,
+    page: Number
 });
 
 // 根据模板定义模型
