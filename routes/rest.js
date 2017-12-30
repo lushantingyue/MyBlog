@@ -18,6 +18,28 @@ router.get('/jianshu', async function(ctx, next) {
             result_collections = result;
             console.log(result);
         }
+    }).sort({"page": 1})
+
+    // TODO:返回REST API 数据
+    ctx.response.body = result_collections;
+})
+
+// TODO: 分页加载文章列表数据
+router.post('/jianshu', async function(ctx, next) {
+    // 解析post请求params参数
+    var num = ctx.request.body.page;
+// TODO:调用已注册的数据集合模型
+    var articlesModel = mongoose.model("articles");
+    var result_collections;
+    await articlesModel.find({"page": num}, function (err, result) {
+        if (err) {
+            console.log('load articles data failed...' + err);
+            return;
+        }
+        else {
+            result_collections = result;
+            console.log(result);
+        }
     })
 
     // TODO:返回REST API 数据
