@@ -25,7 +25,7 @@ router.get('/jianshu', async function(ctx, next) {
 })
 
 // TODO: 分页加载文章列表数据
-router.post('/jianshu', async function(ctx, next) {
+router.post('/jianshuList', async function(ctx, next) {
     // 解析post请求params参数
     var num = ctx.request.body.page;
 // TODO:调用已注册的数据集合模型
