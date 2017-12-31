@@ -1,5 +1,6 @@
 var router = require('koa-router')();
 var mongoose = require('mongoose');
+var he = require('he');
 
 router.prefix('/data');
 
@@ -60,6 +61,8 @@ router.get('/jianshuDetail/:href', async function(ctx, next) {
             return;
         }
         else {
+            var processText = he.decode(result.text);
+            result.text = processText
             result_collections = result;
             console.log(result);
         }
