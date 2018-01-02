@@ -3,6 +3,7 @@ console.log(dbName)
 require('./model/account_model');
 require('./model/article_model');
 require('./model/articledetail_model');
+require('./model/rest_model');
 
 // const session = require('koa-generic-session')
 const session = require('koa-session-minimal')  // 适配koa2, 用于取代 koa-generic-session

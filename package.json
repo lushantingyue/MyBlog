@@ -26,7 +26,8 @@
     "koa2-cors": "^2.0.4",
     "mongoose": "^4.10.2",
     "nunjucks": "3.0.1",
-    "he": "^1.1.1"
+    "he": "^1.1.1",
+    "cheerio": "^1.0.0-rc.2"
   },
   "devDependencies": {
     "nodemon": "^1.8.1"
