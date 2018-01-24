@@ -49,3 +49,5 @@
     "mongoose": "^4.10.2" // mongoDB数据库操作模块
   }
   ```
+
+配置koa-passport认证: http://blog.csdn.net/a1035434631/article/details/78752271
