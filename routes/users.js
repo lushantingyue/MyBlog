@@ -1,7 +1,7 @@
 var router = require('koa-router')();
 var mongoose = require('mongoose');
-var User_Model = mongoose.model('User');  // 使用User模型
-var Account_Model = mongoose.model('account');  // 使用 account模型
+var User_Model = mongoose.model('User');  // 使用User模型, 通讯录清单
+var Account_Model = mongoose.model('account');  // 使用 account模型, 登陆账户管理
 
 router.prefix('/users');
 

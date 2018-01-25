@@ -30,6 +30,8 @@
     cache 静态资源缓存
     base-author验证
     csrf 安全
+    图片/文件上传
+    pdf文件下发    
 ```
 
 #### koa2 和 koa 1.x 的区别
@@ -50,4 +52,4 @@
   }
   ```
 
-配置koa-passport认证: http://blog.csdn.net/a1035434631/article/details/78752271
+##### [配置koa-passport认证](http://blog.csdn.net/a1035434631/article/details/78752271)

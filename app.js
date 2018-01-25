@@ -22,17 +22,23 @@ const cors = require('koa2-cors');
 const json = require('koa-json');
 const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser')();
+// const mount = require('koa-mount'); // passport认证
+const passport = require('./config/passport_config'); // passport认证
 const logger = require('koa-logger');
+
+const xauth = require('./routes/xauth');    // passport认证
 
 const index = require('./routes/index');
 const users = require('./routes/users');
 const del = require('./routes/delete');
 const restful = require('./routes/rest');
+const upload = require('./routes/upload');  // 图片上传
 
 // error handler
 onerror(app);
 
 // TODO:middlewares
+app.proxy = true;   // 启动认证路由
 app.use(bodyparser);
 
 app.use(json());
@@ -68,6 +74,10 @@ app.use(session({
         model: 'KoaSession'
     }),
 }));
+
+app.use(passport.initialize()); // 启动认证路由
+app.use(passport.session()); // 启动认证路由
+// app.use(mount('/', xauth.routes()) )    // 启动认证路由
 
 app.use(async (ctx, next) => {
     if (ctx.session.views === undefined)
@@ -122,6 +132,8 @@ app.use(async (ctx, next) => {
 });
 
 //  TODO: 接入路由定义
+app.use(xauth.routes())
+    .use(xauth.allowedMethods());
 app.use(index.routes())
     .use(index.allowedMethods());
 app.use(users.routes())
@@ -130,5 +142,7 @@ app.use(del.routes())
     .use(del.allowedMethods());
 app.use(restful.routes())
     .use(restful.allowedMethods());
+app.use(upload.routes())
+    .use(upload.allowedMethods());
 
 module.exports = app;
