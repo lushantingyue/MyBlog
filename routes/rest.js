@@ -6,16 +6,6 @@ var htmlparser = require("htmlparser2");
 var he = require('he');
 
 router.prefix('/data');
-router.use('/data/*', (ctx, next) => {
-    if(ctx.isAuthenticated()) {
-        next()
-    } else {
-        ctx.status = 401
-        ctx.body = {
-            msg: 'auth fail'
-        }
-    }
-});
 
 // TODO: 文章列表数据
 router.get('/jianshu', async function(ctx, next) {

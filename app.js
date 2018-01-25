@@ -133,6 +133,8 @@ app.use(async (ctx, next) => {
 //  TODO: 接入路由定义
 app.use(xauth.routes())
     .use(xauth.allowedMethods());
+app.use(upload.routes())
+    .use(upload.allowedMethods());
 app.use(index.routes())
     .use(index.allowedMethods());
 app.use(users.routes())
@@ -141,7 +143,5 @@ app.use(del.routes())
     .use(del.allowedMethods());
 app.use(restful.routes())
     .use(restful.allowedMethods());
-app.use(upload.routes())
-    .use(upload.allowedMethods());
 
 module.exports = app;
