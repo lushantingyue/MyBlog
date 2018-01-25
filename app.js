@@ -27,7 +27,6 @@ const passport = require('./config/passport_config'); // passport认证
 const logger = require('koa-logger');
 
 const xauth = require('./routes/xauth');    // passport认证
-
 const index = require('./routes/index');
 const users = require('./routes/users');
 const del = require('./routes/delete');
