@@ -23,11 +23,11 @@ router.post('/xauth/logout', function (ctx, next) {
 // 自定义身份认证校验的路由
 router.post('/xauth/test', function (ctx, next) {
     if (ctx.isAuthenticated()) {
-        ctx.body = { message: '认证通过' }
+        ctx.body = { message: '认证通过', status: 200}
     } else {
         // ctx.throw(401)
         ctx.status = 401
-        ctx.body = { message: '非法访问' }
+        ctx.body = { message: '非法访问', status: 401 }
     }
 });
 

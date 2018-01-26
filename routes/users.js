@@ -77,30 +77,31 @@ router.post('/register', async function (ctx, next) {
         signature: 'I am Super User...',
         created: Date.now()
     });
-    var condition = {
-        $and: [{"username": body.username}, {"password": body.password}]
-    }
-    Account_Model.findOne(condition, function (err, data) {
-        if(err) {
+    // var condition = {
+    //     $and: [{"username": body.username}, {"password": body.password}]
+    // }
+    await Account_Model.findOne({"username": body.username}, (err, user) => {
+        if (err) {
             console.log(err)
-            return;
+            return ;
         } else {
-            if(null != data) {
+            if(null != user) {
                 console.log('账号已存在...')
             } else {
                 console.log('可注册...')
+
+                account.save(function (err, acc, count) {
+                    if (!ctx.request.body.username) {
+                        ctx.throw(400, '.name required');
+                    } else {
+                        console.log('register success...')
+                    }
+                    session.current_user = {
+                        username: body.username,
+                        password: body.password
+                    }
+                });
             }
-        }
-    });
-    account.save(function (err, acc, count) {
-        if (!ctx.request.body.username) {
-            ctx.throw(400, '.name required');
-        } else {
-            console.log('register success...')
-        }
-        session.current_user = {
-            username: body.username,
-            password: body.password
         }
     });
 
