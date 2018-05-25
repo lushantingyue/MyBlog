@@ -31,7 +31,7 @@ passport.use(new LocalStrategy(
 
 // 序列化策略：用户登陆验证成功后, 用户数据序列化存储至session中  ctx.login()触发
 passport.serializeUser(function (user, done) {
-    done(null, user)
+    done(null, user.username)
 });
 
 // 反序列化策略：每次请求时, 从session中提取用户对象
