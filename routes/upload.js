@@ -4,10 +4,13 @@ const multer = require('koa-multer');
 // 路由守护中间件: 拦截校验passport权限
 router.use('/*', async (ctx, next) => {
     if (ctx.isAuthenticated()) {
+        console.log('success...' + ctx.body);
         await next()
     } else {
         ctx.status = 401
         ctx.body = {msg: 'auth fail'}
+        console.log('auth failed...' + ctx.status);
+        await next()
     }
 });
 
