@@ -4,8 +4,6 @@ const LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
 var Account_Model = mongoose.model('account');  // 使用 account模型
 
-var router = require('koa-router')();
-
 // 用户名密码验证策略
 passport.use(new LocalStrategy(
     async (username, password, done) => {

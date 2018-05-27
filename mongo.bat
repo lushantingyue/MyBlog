@@ -1,2 +1,3 @@
 @echo off
-start "" "D:\Program Files\MongoDB\Server\3.4\bin\mongo.exe"
+cmder & cd D:\MongoDB\Server\3.4\bin
+start mongo.exe
