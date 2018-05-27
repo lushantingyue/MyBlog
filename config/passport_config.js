@@ -1,5 +1,6 @@
 const passport = require('koa-passport');
 const LocalStrategy = require('passport-local').Strategy;
+const BearerStrategy = require('passport-http-bearer').Strategy;
 
 var mongoose = require('mongoose');
 var Account_Model = mongoose.model('account');  // 使用 account模型
@@ -23,6 +24,16 @@ passport.use(new LocalStrategy(
                     return done(null, false, '未知用户')
                 }
             }
+        });
+    }
+));
+
+passport.use(new BearerStrategy(
+    function(token, done) {
+        Account_Model.findOne({ token: token }, function (err, user) {
+            if (err) { return done(err); }
+            if (!user) { return done(null, false); }
+            return done(null, user, { scope: 'all' });
         });
     }
 ));
