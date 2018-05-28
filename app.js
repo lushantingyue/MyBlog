@@ -23,7 +23,7 @@ const json = require('koa-json');
 const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser')();
 // const mount = require('koa-mount'); // passport认证
-const passport = require('./config/passport_config'); // passport认证
+const passport = require('./config/passport_config').passport_strategy; // passport认证
 const logger = require('koa-logger');
 
 const xauth = require('./routes/xauth');    // passport认证

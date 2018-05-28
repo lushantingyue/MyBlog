@@ -43,16 +43,6 @@ passport.use(new BearerStrategy(
     }
 ));
 
-// passport.use(new BearerStrategy(async (token, done) => {
-//     try {
-//         console.log(token)
-//         const accessToken = await AccessToken.findOne({token}).populate('user')
-//         accessToken ? done(null, accessToken.user) : done(null, false, {type: 'error', message: '授权失败！'})
-//     } catch (err) {
-//         done(err)
-//     }
-// }))
-
 // 序列化策略：用户登陆验证成功后, 用户数据序列化存储至session中  ctx.login()触发
 passport.serializeUser(function (user, done) {
     done(null, user.username)
@@ -71,5 +61,5 @@ exports.isLocalAuthenticated = function() {
     return passport.authenticate('local', { session: false });
 }
 
-module.exports = passport;
+module.exports.passport_strategy = passport;
 module.exports.secret = 'learnRestApi'; // json web token 加密密钥设置

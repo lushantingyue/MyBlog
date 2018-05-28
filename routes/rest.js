@@ -5,10 +5,12 @@ var htmlparser = require("htmlparser2");
 
 var he = require('he');
 
+const passport = require('../config/passport_config').passport_strategy;
+
 router.prefix('/data');
 
 // TODO: 文章列表数据
-router.get('/jianshu', async function(ctx, next) {
+router.get('/jianshu', passport.authenticate('bearer', { session: false }), async function(ctx, next) {
 
 // TODO:调用已注册的数据集合模型
     var articlesModel = mongoose.model("articles");

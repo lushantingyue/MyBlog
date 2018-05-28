@@ -3,6 +3,10 @@ var mongoose = require('mongoose');
 var User_Model = mongoose.model('User');  // 使用User模型, 通讯录清单
 var Account_Model = mongoose.model('account');  // 使用 account模型, 登陆账户管理
 
+const jwt = require('jsonwebtoken');
+const config = require('../config/passport_config');
+let responseData = null; // 全局暂存处理结果
+
 router.prefix('/users');
 
 router.get('/a', async (ctx, next) => {
@@ -71,15 +75,18 @@ router.post('/register', async function (ctx, next) {
     console.log(ctx.request.body)
     var session = ctx.session;
     let body = ctx.request.body;
+    // body.password = await bcrypt.hash(body.password, 10)
+    // if (!body.username) {
+    //     ctx.throw(400, '.name required'); // 数据模型已经声明为必须
+    // }
     let account = new Account_Model({
         username: body.username,
         password: body.password,
         signature: 'I am Super User...',
-        created: Date.now()
+        created: Date.now(),
+        token: 'token'
     });
-    // var condition = {
-    //     $and: [{"username": body.username}, {"password": body.password}]
-    // }
+
     await Account_Model.findOne({"username": body.username}, (err, user) => {
         if (err) {
             console.log(err)
@@ -87,59 +94,127 @@ router.post('/register', async function (ctx, next) {
         } else {
             if(null != user) {
                 console.log('账号已存在...')
+                ctx.response.body = { message: '账号已存在...'}
             } else {
                 console.log('可注册...')
 
-                account.save(function (err, acc, count) {
-                    if (!ctx.request.body.username) {
-                        ctx.throw(400, '.name required');
-                    } else {
-                        console.log('register success...')
+                // 保存用户账号
+                account.save((err) => {
+                    if (err) {
+                        console.log(err);
+                        return ctx.response.body = { success: false, message: '注册失败! '};
                     }
-                    session.current_user = {
-                        username: body.username,
-                        password: body.password
-                    }
+                    console.log('register success...')
+                    // session.current_user = { username: body.username }
+                    // ctx.response.body = { success: true, message: '成功创建新用户! ' } // 在这里不会被调用
                 });
+                ctx.response.body = { success: true, message: '成功创建新用户! ' }
             }
         }
     });
 
-    console.log(session)
-    ctx.redirect('/list')
+    // console.log(session)
+    // ctx.redirect('/list')
 });
 
-// TODO: login
+// TODO: login 检查用户名、密码，验证通过后返回一个access token
 router.post('/login', async function (ctx) {
-    "use strict";
-    console.log(ctx.request.body)
     var session = ctx.session;
     let body = ctx.request.body;
+    console.log(body)
+
     var condition = {
         $and: [{"username": body.username}, {"password": body.password}]
     };
 
-    Account_Model.findOne(condition, function (err, data) {
-        if (err) {
-            console.log(err)
-            return;
-        } else {
-            if (null != data) {
-                console.log(data)
-                console.log('login success...')
-                session.current_user = {
-                    username: body.username,
-                    password: body.password
+    const account = await Account_Model.findOne({"username": body.username});
+    if (!account) {
+        ctx.response.status = 401
+        ctx.response.body = { success: false, message: '认证失败，用户不存在! '}
+    } else {
+        // let responseData;
+        await account.comparePassword(body.password, async (err, isMatch) => {
+            if (isMatch && !err) {
+                // 生成 token签名
+                var token = jwt.sign({username: account.username}, config.secret, {
+                    expiresIn: 3600 // 1 hour有效时间
+                });
+                // account.update({username: body.username}, {token : token}, function (err) {});
+                account.set({token: token});
+                account.save(function (err) {
+                    if (err) {
+                        ctx.status = 401;
+                        ctx.body = {message: err}
+                        return;
+                    }
+                });
+                console.log('token: ' + token);
+                console.log('login success...');
+                // ctx.status = 200
+                // ctx.response.body
+                responseData = {
+                    success: true,
+                    message: '验证成功!',
+                    token: 'Bearer ' + token,
+                    username: account.username
                 }
-                console.log(session)
-
-                // ctx.redirect('/list')
+                // ctx.response.body = responseData;
             } else {
-                console.log('user not exist...')
-                return;
+                responseData = {success: false, message: '认证失败, 密码错误! '};
             }
-        }
-    });
+        })
+
+        ctx.response.body = responseData;
+    }
+
+    /////////////////////////////////////////////////////////////////
+    // await Account_Model.findOne({"username": body.username}, function (err, data) {
+    //     if (err) {
+    //         console.log(err)
+    //         return;
+    //     } else {
+    //         if (null != data) {
+    //             console.log(data)
+    //             data.comparePassword(body.password, async (err, isMatch) => {
+    //                 if (isMatch && !err) {
+    //                     // 生成 token签名
+    //                     var token = jwt.sign({username: data.username}, config.secret, {
+    //                         expiresIn: 3600 // 1 hour有效时间
+    //                     });
+    //                     data.token = token;
+    //                     data.save(function (err) {
+    //                         if (err) {
+    //                             ctx.status = 401;
+    //                             ctx.body = { message: err }
+    //                             return;
+    //                         }
+    //                     });
+    //                     ctx.response.body = await {
+    //                         success: true,
+    //                         message: '验证成功!',
+    //                         token: 'Bearer ' + token,
+    //                         username: data.username
+    //                     };
+    //                     // console.log(responseData)
+    //                     console.log('token: ' + token);
+    //                     console.log('login success...');
+    //                     session.current_user = {
+    //                         username: body.username
+    //                     }
+    //                     console.log(session)
+    //
+    //                 } else {
+    //                    ctx.response.body = {success: false, message: '认证失败, 密码错误! '};
+    //                 }
+    //             });
+    //
+    //             // ctx.response.body = {success: false, message: '认证失败, 密码错误! '};
+    //         } else {
+    //             console.log('user not exist...')
+    //             ctx.response.body = { success: false, message: '认证失败，用户不存在! '}
+    //         }
+    //     }
+    // });
 
 })
 

@@ -1,4 +1,4 @@
-const passport = require('../config/passport_config');
+const passport = require('../config/passport_config').passport_strategy;
 var router = require('koa-router')();
 
 // 认证登陆
