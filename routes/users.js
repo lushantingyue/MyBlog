@@ -132,39 +132,72 @@ router.post('/login', async function (ctx, next) {
         ctx.response.status = 401
         ctx.response.body = { success: false, message: '认证失败，用户不存在! '}
     } else {
-        account.comparePassword(body.password, (err, isMatch) => {
-            if (isMatch && !err) {
-                // 生成 token签名
-                var token = jwt.sign({username: account.username}, config.secret, {
-                    expiresIn: 1800 // 30分钟有效时间
-                });
-                account.token = token;
-                Account_Model.update({_id: account._id}, account, function (err) {
-                    if (err) {
-                        ctx.response.status = 401;
-                        ctx.response.body = {message: err}
-                        return;
-                    }
-                    console.log('更新数据成功...');
-                });
-                console.log('login success...' + 'token: ' + token);
+        // account.comparePassword(body.password, (err, isMatch) => {
+        //     if (isMatch && !err) {
+        //         // 生成 token签名
+        //         var token = jwt.sign({username: account.username}, config.secret, {
+        //             expiresIn: 1800 // 30分钟有效时间
+        //         });
+        //         account.token = token;
+        //         Account_Model.update({_id: account._id}, account, function (err) {
+        //             if (err) {
+        //                 ctx.response.status = 401;
+        //                 ctx.response.body = {message: err}
+        //                 return;
+        //             }
+        //             console.log('更新数据成功...');
+        //         });
+        //         console.log('login success...' + 'token: ' + token);
+        //
+        //         accessData = {
+        //             success: true,
+        //             message: '验证成功!',
+        //             token: 'Bearer ' + token,
+        //             username: account.username
+        //         }
+        //
+        //     } else {
+        //         accessStatus = 401
+        //         accessData = {success: false, message: '认证失败, 密码错误! '};
+        //     }
+        // })
 
-                accessData = {
-                    success: true,
-                    message: '验证成功!',
-                    token: 'Bearer ' + token,
-                    username: account.username
+
+        /**
+         * 同步校验密码
+         */
+        if (account.comparePasswordSync(body.password)) {
+            // 生成 token签名
+            var token = jwt.sign({username: account.username}, config.secret, {
+                expiresIn: 1800 // 30分钟有效时间
+            });
+            account.token = token;
+            Account_Model.update({_id: account._id}, account, function (err) {
+                if (err) {
+                    ctx.response.status = 401;
+                    ctx.response.body = {message: err}
+                    return;
                 }
-            } else {
-                accessStatus = 401
-                accessData = {success: false, message: '认证失败, 密码错误! '};
+                console.log('更新数据成功...');
+            });
+            console.log('login success...' + 'token: ' + token);
+
+            accessStatus = 200
+            accessData = {
+                success: true,
+                message: '验证成功!',
+                token: 'Bearer ' + token,
+                username: account.username
             }
-        })
+        } else {
+            accessStatus = 401
+            accessData = {success: false, message: '认证失败, 密码错误! '};
+        }
 
         ctx.response.status = accessStatus;
         ctx.response.body = accessData;
-
         // 注: koa2中 ctx.response.body 和 ctx.body 是等效的
+        // account.comparePassword()被调用在 response.body赋值后面, 检查后发现是因为使用了promise的异步机制
     }
 
 })

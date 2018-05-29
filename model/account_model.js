@@ -39,7 +39,7 @@ accountSchema.pre('save', function (next) {
     }
 });
 
-// 校验用户输入密码是否正确
+// 校验用户输入密码是否正确(异步callback方式)
 accountSchema.methods.comparePassword = function(psw, cb) {
     bcrypt.compare(psw, this.password, (err, isMatch) => {
         if (err) {
@@ -47,6 +47,11 @@ accountSchema.methods.comparePassword = function(psw, cb) {
         }
         cb(null, isMatch);
     });
+};
+
+// 校验用户输入密码是否正确(同步方式)
+accountSchema.methods.comparePasswordSync = function(psw) {
+    return bcrypt.compareSync(psw, this.password);
 };
 
 // 根据模板定义模型
