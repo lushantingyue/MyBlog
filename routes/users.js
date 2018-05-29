@@ -5,7 +5,7 @@ var Account_Model = mongoose.model('account');  // 使用 account模型, 登陆�
 
 const jwt = require('jsonwebtoken');
 const config = require('../config/passport_config');
-let responseData = null; // 全局暂存处理结果
+let accessStatus = 200, accessData = null; // 全局暂存处理结果
 
 router.prefix('/users');
 
@@ -118,7 +118,7 @@ router.post('/register', async function (ctx, next) {
 });
 
 // TODO: login 检查用户名、密码，验证通过后返回一个access token
-router.post('/login', async function (ctx) {
+router.post('/login', async function (ctx, next) {
     var session = ctx.session;
     let body = ctx.request.body;
     console.log(body)
@@ -132,89 +132,40 @@ router.post('/login', async function (ctx) {
         ctx.response.status = 401
         ctx.response.body = { success: false, message: '认证失败，用户不存在! '}
     } else {
-        // let responseData;
-        await account.comparePassword(body.password, async (err, isMatch) => {
+        account.comparePassword(body.password, (err, isMatch) => {
             if (isMatch && !err) {
                 // 生成 token签名
                 var token = jwt.sign({username: account.username}, config.secret, {
-                    expiresIn: 3600 // 1 hour有效时间
+                    expiresIn: 1800 // 30分钟有效时间
                 });
-                // account.update({username: body.username}, {token : token}, function (err) {});
-                account.set({token: token});
-                account.save(function (err) {
+                account.token = token;
+                Account_Model.update({_id: account._id}, account, function (err) {
                     if (err) {
-                        ctx.status = 401;
-                        ctx.body = {message: err}
+                        ctx.response.status = 401;
+                        ctx.response.body = {message: err}
                         return;
                     }
+                    console.log('更新数据成功...');
                 });
-                console.log('token: ' + token);
-                console.log('login success...');
-                // ctx.status = 200
-                // ctx.response.body
-                responseData = {
+                console.log('login success...' + 'token: ' + token);
+
+                accessData = {
                     success: true,
                     message: '验证成功!',
                     token: 'Bearer ' + token,
                     username: account.username
                 }
-                // ctx.response.body = responseData;
             } else {
-                responseData = {success: false, message: '认证失败, 密码错误! '};
+                accessStatus = 401
+                accessData = {success: false, message: '认证失败, 密码错误! '};
             }
         })
 
-        ctx.response.body = responseData;
-    }
+        ctx.response.status = accessStatus;
+        ctx.response.body = accessData;
 
-    /////////////////////////////////////////////////////////////////
-    // await Account_Model.findOne({"username": body.username}, function (err, data) {
-    //     if (err) {
-    //         console.log(err)
-    //         return;
-    //     } else {
-    //         if (null != data) {
-    //             console.log(data)
-    //             data.comparePassword(body.password, async (err, isMatch) => {
-    //                 if (isMatch && !err) {
-    //                     // 生成 token签名
-    //                     var token = jwt.sign({username: data.username}, config.secret, {
-    //                         expiresIn: 3600 // 1 hour有效时间
-    //                     });
-    //                     data.token = token;
-    //                     data.save(function (err) {
-    //                         if (err) {
-    //                             ctx.status = 401;
-    //                             ctx.body = { message: err }
-    //                             return;
-    //                         }
-    //                     });
-    //                     ctx.response.body = await {
-    //                         success: true,
-    //                         message: '验证成功!',
-    //                         token: 'Bearer ' + token,
-    //                         username: data.username
-    //                     };
-    //                     // console.log(responseData)
-    //                     console.log('token: ' + token);
-    //                     console.log('login success...');
-    //                     session.current_user = {
-    //                         username: body.username
-    //                     }
-    //                     console.log(session)
-    //
-    //                 } else {
-    //                    ctx.response.body = {success: false, message: '认证失败, 密码错误! '};
-    //                 }
-    //             });
-    //
-    //             // ctx.response.body = {success: false, message: '认证失败, 密码错误! '};
-    //         } else {
-    //             console.log('user not exist...')
-    //             ctx.response.body = { success: false, message: '认证失败，用户不存在! '}
-    //         }
-    //     }
-    // });
+        // 注: koa2中 ctx.response.body 和 ctx.body 是等效的
+    }
 
 })
 
