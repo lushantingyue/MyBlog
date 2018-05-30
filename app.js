@@ -27,6 +27,9 @@ const passport = require('./config/auth').passport;
 
 const logger = require('koa-logger');
 
+const jwt = require('koa-jwt');
+const tokenError = require('./middleware/token_error');
+
 const xauth = require('./routes/xauth');    // passport认证
 const index = require('./routes/index');
 const users = require('./routes/users');
@@ -39,7 +42,13 @@ onerror(app);
 
 // TODO:middlewares
 app.proxy = true;   // 启动认证路由
+app.use(tokenError);
 app.use(bodyparser);
+app.use(jwt({
+    secret: config.tokenSecret
+}).unless({
+    path: [/^\/users\/login/, /^\/blogapi\//]  // 排除掉不需要校验的路由
+}));
 
 app.use(json());
 // 允许跨域访问
