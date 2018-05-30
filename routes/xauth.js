@@ -1,4 +1,3 @@
-// const passport = require('../config/auth').passportStrategy;
 const passport = require('../config/auth').passport;
 const { isBearerAuthenticated, isLocalAuthenticated } = require('../config/auth');
 

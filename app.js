@@ -21,16 +21,15 @@ const json = require('koa-json');
 const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser')();
 // const mount = require('koa-mount'); // passport认证
-// const passport = require('koa-passport');
-const passport = require('./config/auth').passport;
-// const passport = require('./config/auth').passportStrategy;
+// const passport = require('./config/auth').passport;
 
 const logger = require('koa-logger');
 
 const jwt = require('koa-jwt');
+const config = require('./config/config');
 const tokenError = require('./middleware/token_error');
 
-const xauth = require('./routes/xauth');    // passport认证
+// const xauth = require('./routes/xauth');    // passport认证
 const index = require('./routes/index');
 const users = require('./routes/users');
 const del = require('./routes/delete');
@@ -42,12 +41,13 @@ onerror(app);
 
 // TODO:middlewares
 app.proxy = true;   // 启动认证路由
-app.use(tokenError);
+app.use(tokenError());
 app.use(bodyparser);
+
 app.use(jwt({
     secret: config.tokenSecret
 }).unless({
-    path: [/^\/users\/login/, /^\/blogapi\//]  // 排除掉不需要校验的路由
+    path: [/^\/users\/login/, /^\/data\/jianshu/]  // 排除掉不需要校验的路由
 }));
 
 app.use(json());
@@ -84,8 +84,8 @@ app.use(session({
     }),
 }));
 
-app.use(passport.initialize()); // 启动认证路由
-app.use(passport.session()); // 启动认证路由
+// app.use(passport.initialize()); // 启动认证路由
+// app.use(passport.session()); // 启动认证路由
 // app.use(passport_strategy.authenticate('naive', {session: false}))
 // app.use(mount('/', xauth.routes()) )    // 启动认证路由
 
@@ -142,8 +142,8 @@ app.use(async (ctx, next) => {
 });
 
 //  TODO: 接入路由定义
-app.use(xauth.routes())
-    .use(xauth.allowedMethods());
+// app.use(xauth.routes())
+//     .use(xauth.allowedMethods());
 app.use(upload.routes())
     .use(upload.allowedMethods());
 app.use(index.routes())

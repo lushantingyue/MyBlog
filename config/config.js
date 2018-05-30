@@ -1,1 +1,3 @@
-module.exports.tokenSecret = 'learnRestApi'
+module.exports = {
+    tokenSecret: 'learnRestApi'
+}

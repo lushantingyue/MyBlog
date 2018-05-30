@@ -4,7 +4,7 @@ var User_Model = mongoose.model('User');  // 使用User模型, 通讯录清单
 var Account_Model = mongoose.model('account');  // 使用 account模型, 登陆账户管理
 
 const jwt = require('jsonwebtoken');
-const config = require('../config/auth');
+const config = require('../config/config');
 let accessStatus = 200, accessData = null; // 全局暂存处理结果
 
 router.prefix('/users');
@@ -138,10 +138,9 @@ router.post('/login', async function (ctx, next) {
          */
         if (account.comparePasswordSync(body.password)) {
             // 生成 token签名
-            var token = jwt.sign({username: account.username}, 'learnRestApi', // config.secret
-                {
-                    expiresIn: 1800 // 30分钟有效时间
-                });
+            var token = jwt.sign({username: account.username}, config.tokenSecret, {
+                expiresIn: 1800 // 30分钟有效时间
+            });
             account.token = token;
             Account_Model.update({_id: account._id}, account, function (err) {
                 if (err) {
