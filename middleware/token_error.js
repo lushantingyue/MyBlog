@@ -19,20 +19,28 @@ module.exports = function () {
                     // 解密payload，获取用户名和ID
                     let payload = await verify(token.split(' ')[1], config.tokenSecret);
                     var usr = payload.username
-                    Account_Model.findOne({})
                     await Account_Model.findOne({token: token}, function (err, user) {
                         if (err) {
                             return ;
                         }
                         if (!user) {
+                            ctx.status = 401
+                            ctx.body = {
+                                success: 0,
+                                message: '认证失败, token无效'
+                            };
                             return ;
+                        } else {
+                            ctx.status = 200
+                            ctx.body = {
+                                message: '认证成功',
+                                username: payload.username
+                            };
+                            next();
                         }
-                        next();
                         // return done(null, user, {scope: 'read'});
                     });
-                    // ctx.body = {
-                    //     username: payload.username
-                    // };
+
                 } catch (err) {
                     console.log('token verify fail: ', err)
                 }

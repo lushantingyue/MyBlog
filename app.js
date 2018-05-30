@@ -47,7 +47,7 @@ app.use(bodyparser);
 app.use(jwt({
     secret: config.tokenSecret
 }).unless({
-    path: [/^\/users\/login/, /^\/data\/jianshu/]  // 排除掉不需要校验的路由
+    path: [/^\/users\/login/, /^\/users\/register/]  // 排除掉不需要校验的路由
 }));
 
 app.use(json());

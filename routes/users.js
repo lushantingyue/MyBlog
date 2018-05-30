@@ -118,6 +118,7 @@ router.post('/login', async function (ctx, next) {
     var session = ctx.session;
     let body = ctx.request.body;
     console.log(body)
+
     if (!body.username) {
         ctx.status = 401
         ctx.body = { success: false, message: '.username required' } // 数据模型已经声明为必须
