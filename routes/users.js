@@ -4,7 +4,7 @@ var User_Model = mongoose.model('User');  // 使用User模型, 通讯录清单
 var Account_Model = mongoose.model('account');  // 使用 account模型, 登陆账户管理
 
 const jwt = require('jsonwebtoken');
-const config = require('../config/passport_config');
+const config = require('../config/auth');
 let accessStatus = 200, accessData = null; // 全局暂存处理结果
 
 router.prefix('/users');
@@ -75,10 +75,7 @@ router.post('/register', async function (ctx, next) {
     console.log(ctx.request.body)
     var session = ctx.session;
     let body = ctx.request.body;
-    // body.password = await bcrypt.hash(body.password, 10)
-    // if (!body.username) {
-    //     ctx.throw(400, '.name required'); // 数据模型已经声明为必须
-    // }
+
     let account = new Account_Model({
         username: body.username,
         password: body.password,
@@ -106,7 +103,6 @@ router.post('/register', async function (ctx, next) {
                     }
                     console.log('register success...')
                     // session.current_user = { username: body.username }
-                    // ctx.response.body = { success: true, message: '成功创建新用户! ' } // 在这里不会被调用
                 });
                 ctx.response.body = { success: true, message: '成功创建新用户! ' }
             }
@@ -117,11 +113,16 @@ router.post('/register', async function (ctx, next) {
     // ctx.redirect('/list')
 });
 
-// TODO: login 检查用户名、密码，验证通过后返回一个access token
+// TODO: login 检查用户名、密码，验证通过后下发access token
 router.post('/login', async function (ctx, next) {
     var session = ctx.session;
     let body = ctx.request.body;
     console.log(body)
+    if (!body.username) {
+        ctx.status = 401
+        ctx.body = { success: false, message: '.username required' } // 数据模型已经声明为必须
+        return;
+    }
 
     var condition = {
         $and: [{"username": body.username}, {"password": body.password}]
@@ -132,45 +133,15 @@ router.post('/login', async function (ctx, next) {
         ctx.response.status = 401
         ctx.response.body = { success: false, message: '认证失败，用户不存在! '}
     } else {
-        // account.comparePassword(body.password, (err, isMatch) => {
-        //     if (isMatch && !err) {
-        //         // 生成 token签名
-        //         var token = jwt.sign({username: account.username}, config.secret, {
-        //             expiresIn: 1800 // 30分钟有效时间
-        //         });
-        //         account.token = token;
-        //         Account_Model.update({_id: account._id}, account, function (err) {
-        //             if (err) {
-        //                 ctx.response.status = 401;
-        //                 ctx.response.body = {message: err}
-        //                 return;
-        //             }
-        //             console.log('更新数据成功...');
-        //         });
-        //         console.log('login success...' + 'token: ' + token);
-        //
-        //         accessData = {
-        //             success: true,
-        //             message: '验证成功!',
-        //             token: 'Bearer ' + token,
-        //             username: account.username
-        //         }
-        //
-        //     } else {
-        //         accessStatus = 401
-        //         accessData = {success: false, message: '认证失败, 密码错误! '};
-        //     }
-        // })
-
-
         /**
-         * 同步校验密码
+         *  TODO: 同步校验密码
          */
         if (account.comparePasswordSync(body.password)) {
             // 生成 token签名
-            var token = jwt.sign({username: account.username}, config.secret, {
-                expiresIn: 1800 // 30分钟有效时间
-            });
+            var token = jwt.sign({username: account.username}, 'learnRestApi', // config.secret
+                {
+                    expiresIn: 1800 // 30分钟有效时间
+                });
             account.token = token;
             Account_Model.update({_id: account._id}, account, function (err) {
                 if (err) {

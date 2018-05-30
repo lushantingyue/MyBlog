@@ -16,14 +16,15 @@ const app = new Koa();
 
 const views = require('koa-views');
 const cors = require('koa2-cors');
-// const Router = require('koa-router');
-// const router = new Router();
 
 const json = require('koa-json');
 const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser')();
 // const mount = require('koa-mount'); // passport认证
-const passport = require('./config/passport_config').passport_strategy; // passport认证
+// const passport = require('koa-passport');
+const passport = require('./config/auth').passport;
+// const passport = require('./config/auth').passportStrategy;
+
 const logger = require('koa-logger');
 
 const xauth = require('./routes/xauth');    // passport认证
@@ -76,6 +77,7 @@ app.use(session({
 
 app.use(passport.initialize()); // 启动认证路由
 app.use(passport.session()); // 启动认证路由
+// app.use(passport_strategy.authenticate('naive', {session: false}))
 // app.use(mount('/', xauth.routes()) )    // 启动认证路由
 
 app.use(async (ctx, next) => {

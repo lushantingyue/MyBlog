@@ -1,5 +1,11 @@
-const passport = require('../config/passport_config').passport_strategy;
+// const passport = require('../config/auth').passportStrategy;
+const passport = require('../config/auth').passport;
+const { isBearerAuthenticated, isLocalAuthenticated } = require('../config/auth');
+
 var router = require('koa-router')();
+
+var mongoose = require('mongoose');
+var Account_Model = mongoose.model('account');  // 使用 account模型
 
 // 认证登陆
 router.post('/xauth/login', function (ctx, next) {
