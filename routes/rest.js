@@ -10,9 +10,9 @@ router.prefix('/data');
 // TODO: 文章列表数据
 router.get('/jianshu', async (ctx, next) => {
     // TODO:调用已注册的数据集合模型
-    if (ctx.isAuthenticated()) {
-        console.log("isAuthenticated >>> ");
-    }
+    // if (ctx.isAuthenticated()) {
+    //     console.log("isAuthenticated >>> ");
+    // }
     var articlesModel = mongoose.model("articles");
     var result_collections;
     await articlesModel.find({}, function (err, result) {

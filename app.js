@@ -27,7 +27,7 @@ const logger = require('koa-logger');
 
 const jwt = require('koa-jwt');
 const config = require('./config/config');
-const tokenError = require('./middleware/token_error');
+const tokenError = require('./middleware/token_error').test();
 
 // const xauth = require('./routes/xauth');    // passport认证
 const index = require('./routes/index');
@@ -41,14 +41,8 @@ onerror(app);
 
 // TODO:middlewares
 app.proxy = true;   // 启动认证路由
-app.use(tokenError());
+app.use(tokenError);
 app.use(bodyparser);
-
-app.use(jwt({
-    secret: config.tokenSecret
-}).unless({
-    path: [/^\/users\/login/, /^\/users\/register/]  // 排除掉不需要校验的路由
-}));
 
 app.use(json());
 // 允许跨域访问
@@ -88,6 +82,27 @@ app.use(session({
 // app.use(passport.session()); // 启动认证路由
 // app.use(passport_strategy.authenticate('naive', {session: false}))
 // app.use(mount('/', xauth.routes()) )    // 启动认证路由
+
+app.use(jwt({
+    secret: config.tokenSecret
+}).unless({
+    // 排除掉不需要校验的路由
+    // path: [/^\/backapi\/admin\/login/, /^\/blogapi\//]
+    path: [/^\/users\/login/, /^\/users\//]
+}));
+
+// app.use((ctx, next) => {
+//     if (ctx.url.match(/^\/public/)) {
+//         ctx.body = 'unprotected\n';
+//     } else {
+//         return next();
+//     }
+// });
+// app.use(ctx => {
+//     if (ctx.url.match(/^\/data/)) {
+//         ctx.body = 'protected\n';
+//     }
+// });
 
 app.use(async (ctx, next) => {
     if (ctx.session.views === undefined)

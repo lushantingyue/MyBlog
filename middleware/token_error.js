@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const config = require('../config/config');
 const util = require('util');
+const config = require('../config/config');
 const verify = util.promisify(jwt.verify);
 
 var mongoose = require('mongoose');
@@ -15,32 +15,63 @@ module.exports = function () {
             // 获取jwt
             const token = ctx.header.authorization;
             if (token) {
+                // 解密payload，获取用户名和ID
+                let payload = await verify(token.split(' ')[1], config.tokenSecret);
+                var usr = payload.username
+                ctx.user = {
+                    name: payload.name
+                };
+                // await Account_Model.findOne({username: usr}, function (err, user) {
+                //     if (err) {
+                //     }
+                //     else {
+                //         if (!user) {
+                //             ctx.status = 401;
+                //             ctx.body = {
+                //                 success: false,
+                //                 message: '认证失败, token无效'
+                //             };
+                //         }
+                //     }
+                // })
+                await next();
+            }
+            // else {
+                // ctx.status = 401;
+                // ctx.body = {
+                //     success: false,
+                //     message: '认证失败, 未检测到token'
+                // };
+            // }
+        } catch (err) {
+            console.log('token verify fail: ', err)
+            ctx.redirect('/users/login')
+            // ctx.status = 401;
+            // ctx.body = {
+            //     success: false,
+            //     message: '认证失败'
+            // };
+        }
+    }
+
+}
+
+
+/**
+ * 判断token是否可用
+ */
+module.exports.test = function () {
+    return async function (ctx, next) {
+        try {
+            // 获取jwt
+            const token = ctx.header.authorization;
+            if (token) {
                 try {
                     // 解密payload，获取用户名和ID
                     let payload = await verify(token.split(' ')[1], config.tokenSecret);
-                    var usr = payload.username
-                    await Account_Model.findOne({token: token}, function (err, user) {
-                        if (err) {
-                            return ;
-                        }
-                        if (!user) {
-                            ctx.status = 401
-                            ctx.body = {
-                                success: 0,
-                                message: '认证失败, token无效'
-                            };
-                            return ;
-                        } else {
-                            ctx.status = 200
-                            ctx.body = {
-                                message: '认证成功',
-                                username: payload.username
-                            };
-                            next();
-                        }
-                        // return done(null, user, {scope: 'read'});
-                    });
-
+                    ctx.user = {
+                        username: payload.username
+                    };
                 } catch (err) {
                     console.log('token verify fail: ', err)
                 }
@@ -51,7 +82,7 @@ module.exports = function () {
                 ctx.status = 401;
                 ctx.body = {
                     success: 0,
-                    message: '认证失败'
+                    message: '认证失败,token无效'
                 };
             } else {
                 err.status = 404;
